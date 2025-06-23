@@ -1,5 +1,4 @@
-name: "Gotify Server"
-version: "2.4.0"
+version: "2.6.3"
 slug: "gotify"
 description: "A simple server for sending and receiving messages in real-time per WebSocket"
 url: "https://github.com/gotify/server"
@@ -40,4 +39,3 @@ schema:
   upload_dir: str
   registration: bool
   plugins_dir: str?
-# Remove the image line - this should be built locally

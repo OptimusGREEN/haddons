@@ -1,52 +1,31 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM gotify/server:2.6.3
 
-# Set gotify version
-ARG GOTIFY_VERSION=2.4.0
-
-# Install dependencies (added 'file' package)
+# Install bashio and Home Assistant add-on requirements
+USER root
 RUN apk add --no-cache \
-    ca-certificates \
-    tzdata \
-    curl \
     bash \
-    net-tools \
-    procps \
-    file
+    curl \
+    jq \
+    tzdata
 
-# Determine architecture and download appropriate gotify binary
-RUN echo "=== DEBUG: Architecture detection ===" && \
-    ARCH="$(apk --print-arch)" && \
-    echo "Detected architecture: ${ARCH}" && \
-    uname -m && \
-    file /bin/sh && \
-    case "${ARCH}" in \
-        x86_64) GOTIFY_ARCH="amd64" ;; \
-        aarch64) GOTIFY_ARCH="arm64" ;; \
-        armhf) GOTIFY_ARCH="arm-6" ;; \
-        armv7) GOTIFY_ARCH="arm-7" ;; \
-        i386) GOTIFY_ARCH="386" ;; \
-        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
-    esac && \
-    echo "Gotify architecture: ${GOTIFY_ARCH}" && \
-    DOWNLOAD_URL="https://github.com/gotify/server/releases/download/v${GOTIFY_VERSION}/gotify-linux-${GOTIFY_ARCH}" && \
-    echo "Download URL: ${DOWNLOAD_URL}" && \
-    curl -L "$DOWNLOAD_URL" -o /usr/local/bin/gotify && \
-    echo "Download completed" && \
-    ls -la /usr/local/bin/gotify && \
-    file /usr/local/bin/gotify && \
-    chmod +x /usr/local/bin/gotify && \
-    echo "Binary made executable" && \
-    ls -la /usr/local/bin/gotify
+# Install bashio
+RUN curl -J -L -o /tmp/bashio.tar.gz \
+    "https://github.com/hassio-addons/bashio/archive/v0.16.2.tar.gz" \
+    && mkdir /tmp/bashio \
+    && tar zxvf /tmp/bashio.tar.gz --strip 1 -C /tmp/bashio \
+    && mv /tmp/bashio/lib /usr/lib/bashio \
+    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
+    && rm -rf /tmp/bashio.tar.gz /tmp/bashio
 
 # Copy configuration files
 COPY run.sh /
-
-# Make run script executable
 RUN chmod a+x /run.sh
 
-# Create data directory
-RUN mkdir -p /data
+# Create data directory with proper permissions
+RUN mkdir -p /data && chown -R 1000:1000 /data
+
+# Switch back to gotify user
+USER 1000
 
 # Set working directory
 WORKDIR /data
@@ -58,5 +37,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-# Start gotify
+# Start with our custom run script
 CMD ["/run.sh"]
