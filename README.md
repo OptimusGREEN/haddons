@@ -1,0 +1,2 @@
+# haddons
+Home Assistant Addons
