@@ -9,5 +9,6 @@ labels:
   org.opencontainers.image.description: "A simple server for sending and receiving messages"
   org.opencontainers.image.source: "https://github.com/gotify/server"
   org.opencontainers.image.licenses: "MIT"
+  org.opencontainers.image.version: "2.4.0"
 args:
   GOTIFY_VERSION: "2.4.0"
