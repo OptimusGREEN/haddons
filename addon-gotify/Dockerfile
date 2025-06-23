@@ -4,14 +4,15 @@ FROM $BUILD_FROM
 # Set gotify version
 ARG GOTIFY_VERSION=2.4.0
 
-# Install dependencies
+# Install dependencies (added 'file' package)
 RUN apk add --no-cache \
     ca-certificates \
     tzdata \
     curl \
     bash \
     net-tools \
-    procps
+    procps \
+    file
 
 # Determine architecture and download appropriate gotify binary
 RUN echo "=== DEBUG: Architecture detection ===" && \
