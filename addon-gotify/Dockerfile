@@ -17,6 +17,8 @@ RUN apk add --no-cache \
 RUN echo "=== DEBUG: Architecture detection ===" && \
     ARCH="$(apk --print-arch)" && \
     echo "Detected architecture: ${ARCH}" && \
+    uname -m && \
+    file /bin/sh && \
     case "${ARCH}" in \
         x86_64) GOTIFY_ARCH="amd64" ;; \
         aarch64) GOTIFY_ARCH="arm64" ;; \
@@ -31,11 +33,10 @@ RUN echo "=== DEBUG: Architecture detection ===" && \
     curl -L "$DOWNLOAD_URL" -o /usr/local/bin/gotify && \
     echo "Download completed" && \
     ls -la /usr/local/bin/gotify && \
+    file /usr/local/bin/gotify && \
     chmod +x /usr/local/bin/gotify && \
     echo "Binary made executable" && \
-    ls -la /usr/local/bin/gotify && \
-    echo "Testing binary:" && \
-    /usr/local/bin/gotify --version || echo "Version check failed but continuing"
+    ls -la /usr/local/bin/gotify
 
 # Copy configuration files
 COPY run.sh /

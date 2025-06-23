@@ -109,7 +109,12 @@ fi
 
 # Test the binary
 bashio::log.info "Testing Gotify binary..."
-/usr/local/bin/gotify --version || bashio::log.warning "Version check failed"
+bashio::log.info "Binary file info:"
+file /usr/local/bin/gotify
+bashio::log.info "System architecture info:"
+uname -a
+bashio::log.info "Attempting version check..."
+/usr/local/bin/gotify --version || bashio::log.error "Version check failed - binary architecture mismatch!"
 
 # Start Gotify server with configuration file
 bashio::log.info "Launching Gotify server..."
