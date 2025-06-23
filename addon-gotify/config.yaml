@@ -1,5 +1,5 @@
 name: Gotify Server
-version: "0.0.2"
+version: "1.0.2"
 slug: gotify_server
 description: Self-hosted notification server (Gotify) as a Home Assistant addon
 startup: services
