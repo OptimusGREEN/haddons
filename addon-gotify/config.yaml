@@ -1,10 +1,10 @@
 name: Gotify Server
-version: "0.0.1"
+version: "0.0.2"
 slug: gotify_server
 description: Self-hosted notification server (Gotify) as a Home Assistant addon
 startup: services
 boot: auto
-url: https://github.com/gotify/server
+url: https://github.com/OptimusGREEN/haddons
 webui: "http://[HOST]:[PORT:80]/"
 ingress: false
 panel_icon: mdi:bell-ring
