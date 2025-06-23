@@ -39,7 +39,6 @@ RUN echo "=== DEBUG: Architecture detection ===" && \
 
 # Copy configuration files
 COPY run.sh /
-COPY config.yml.tmpl /
 
 # Make run script executable
 RUN chmod a+x /run.sh
