@@ -4,7 +4,7 @@ slug: addon_gotify
 description: Self-hosted notification server (Gotify) as a Home Assistant addon
 startup: services
 boot: auto
-url: https://github.com/OptimusGREEN/haddons/tree/main/addon-gotify
+url: https://github.com/OptimusGREEN/haddons/tree/main/addon_gotify
 webui: "http://[HOST]:[PORT:80]/"
 ingress: false
 panel_icon: mdi:bell-ring
