@@ -1,17 +1,32 @@
-FROM golang:alpine as builder
+FROM golang:1.22-alpine as builder
 
-WORKDIR /build
-RUN apk add --no-cache git
-RUN git clone https://github.com/gotify/server.git . && \
-    go build -o gotify
+WORKDIR /app
 
-FROM alpine
+# Install dependencies
+RUN apk add --no-cache git ca-certificates
 
+# Clone the latest stable Gotify release
+RUN git clone --depth=1 --branch v2.4.0 https://github.com/gotify/server.git .
+
+# Build the binary
+RUN go build -o gotify
+
+# --- Final stage image ---
+FROM alpine:3.19
+
+# Create non-root user
 RUN adduser -D -H -u 1000 gotify
+
+# Copy binary
+COPY --from=builder /app/gotify /usr/local/bin/gotify
+
+# Use non-root user
 USER gotify
 
-COPY --from=builder /build/gotify /usr/local/bin/gotify
-
+# Expose port
 EXPOSE 80
 
-CMD [ "gotify", "--config", "/data/config.yml" ]
+# Run Gotify with config (mounted by addon)
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
+CMD [ "/run.sh" ]
