@@ -9,10 +9,14 @@ RUN apk add --no-cache \
     ca-certificates \
     tzdata \
     curl \
-    bash
+    bash \
+    net-tools \
+    procps
 
 # Determine architecture and download appropriate gotify binary
-RUN ARCH="$(apk --print-arch)" && \
+RUN echo "=== DEBUG: Architecture detection ===" && \
+    ARCH="$(apk --print-arch)" && \
+    echo "Detected architecture: ${ARCH}" && \
     case "${ARCH}" in \
         x86_64) GOTIFY_ARCH="amd64" ;; \
         aarch64) GOTIFY_ARCH="arm64" ;; \
@@ -21,9 +25,17 @@ RUN ARCH="$(apk --print-arch)" && \
         i386) GOTIFY_ARCH="386" ;; \
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
-    curl -L "https://github.com/gotify/server/releases/download/v${GOTIFY_VERSION}/gotify-linux-${GOTIFY_ARCH}" \
-         -o /usr/local/bin/gotify && \
-    chmod +x /usr/local/bin/gotify
+    echo "Gotify architecture: ${GOTIFY_ARCH}" && \
+    DOWNLOAD_URL="https://github.com/gotify/server/releases/download/v${GOTIFY_VERSION}/gotify-linux-${GOTIFY_ARCH}" && \
+    echo "Download URL: ${DOWNLOAD_URL}" && \
+    curl -L "$DOWNLOAD_URL" -o /usr/local/bin/gotify && \
+    echo "Download completed" && \
+    ls -la /usr/local/bin/gotify && \
+    chmod +x /usr/local/bin/gotify && \
+    echo "Binary made executable" && \
+    ls -la /usr/local/bin/gotify && \
+    echo "Testing binary:" && \
+    /usr/local/bin/gotify --version || echo "Version check failed but continuing"
 
 # Copy configuration files
 COPY run.sh /
